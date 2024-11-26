@@ -14,16 +14,19 @@
 
 <style>
     footer {
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        padding: 10px 0;
-        margin-top: 20px;
-    }
+    background-color: #e39bf9;
+    color: #590363;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+    font-weight: bold; 
+}
+
     .footer-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 20px;
+        
     }
     footer ul {
         list-style: none;

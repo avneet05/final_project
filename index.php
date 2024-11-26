@@ -23,7 +23,7 @@ $result = $pdo->query($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitLife Hub - CMS Dashboard</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
 </head>
 <body>
     <div class="container">
@@ -33,11 +33,10 @@ $result = $pdo->query($query);
             <ul>
                 <li><a href="create.php">Create New Page</a></li>
                 <li><a href="view_pages.php">View All Pages</a></li>
-                <!-- <li><a href="categories.php">Manage Categories</a></li> -->
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </nav>
-
+        <div class="recent_pages">
         <h2>Recent Pages</h2>
         <ul>
             <?php
@@ -50,7 +49,7 @@ $result = $pdo->query($query);
                 echo "<li>No pages available.</li>";
             }
             ?>
-        </ul>
+        </ul></div>
     </div>
 </body>
 </html>

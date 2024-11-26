@@ -1,31 +1,23 @@
 <?php
-// Start the session
 session_start();
+require 'db.php';
 
-// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-// Include the database connection file
-require 'db.php';
+// Fetch sorting and search inputs
+$sort = $_GET['sort'] ?? 'created_at';
+$order = in_array($sort, ['title', 'created_at', 'updated_at']) ? $sort : 'created_at';
 
-// Define default sort options
-$sort_column = 'created_at';
-$sort_order = 'ASC';
+$search = $_GET['search'] ?? '';
 
-if (isset($_GET['sort'])) {
-    $allowed_columns = ['title', 'created_at', 'updated_at'];
-    if (in_array($_GET['sort'], $allowed_columns)) {
-        $sort_column = $_GET['sort'];
-    }
-    $sort_order = isset($_GET['order']) && $_GET['order'] === 'DESC' ? 'DESC' : 'ASC';
-}
-
-// Fetch pages from the database
-$query = "SELECT * FROM pages ORDER BY $sort_column $sort_order";
+// Build query dynamically
+$query = "SELECT * FROM pages WHERE title LIKE :search ORDER BY $order ASC";
 $stmt = $pdo->prepare($query);
+$searchTerm = '%' . $search . '%';
+$stmt->bindParam(':search', $searchTerm, PDO::PARAM_STR);
 $stmt->execute();
 $pages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -37,57 +29,77 @@ $pages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Pages</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        a {
-            text-decoration: none;
-            color: blue;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .search-bar, .sort-dropdown { margin-bottom: 15px; }
+        .search-bar input { padding: 8px; width: 250px; }
+        .sort-dropdown select { padding: 8px; }
+        a { text-decoration: none; color: #007bff; }
+        a:hover { color: #0056b3; }
     </style>
 </head>
 <body>
     <h1>View Pages</h1>
+
+    <!-- Search and Sort Section -->
+    <form method="GET" class="search-bar">
+        <input type="text" name="search" placeholder="Search by title..." value="<?php echo htmlspecialchars($search); ?>">
+        <button type="submit">Search</button>
+    </form>
+
+    <form method="GET" class="sort-dropdown">
+        <label for="sort">Sort by:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()">
+            <option value="created_at" <?php echo $sort === 'created_at' ? 'selected' : ''; ?>>Created Date</option>
+            <option value="updated_at" <?php echo $sort === 'updated_at' ? 'selected' : ''; ?>>Updated Date</option>
+            <option value="title" <?php echo $sort === 'title' ? 'selected' : ''; ?>>Title</option>
+        </select>
+        <input type="hidden" name="search" value="<?php echo htmlspecialchars($search); ?>"> <!-- Preserve search term -->
+    </form>
+
+    <!-- Pages Table -->
     <table>
         <thead>
             <tr>
-                <th><a href="view_pages.php?sort=title&order=<?php echo $sort_order === 'ASC' ? 'DESC' : 'ASC'; ?>">Title</a></th>
-                <th><a href="view_pages.php?sort=created_at&order=<?php echo $sort_order === 'ASC' ? 'DESC' : 'ASC'; ?>">Created At</a></th>
-                <th><a href="view_pages.php?sort=updated_at&order=<?php echo $sort_order === 'ASC' ? 'DESC' : 'ASC'; ?>">Updated At</a></th>
-                <th>Actions</th>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <th>Actions</th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody>
-            <?php if (!empty($pages)): ?>
+            <?php if (count($pages) > 0): ?>
                 <?php foreach ($pages as $page): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($page['title']); ?></td>
+                        <td><?php echo htmlspecialchars(substr($page['content'], 0, 50)) . '...'; ?></td>
                         <td><?php echo htmlspecialchars($page['created_at']); ?></td>
                         <td><?php echo htmlspecialchars($page['updated_at']); ?></td>
-                        <td>
-                            <a href="edit_page.php?id=<?php echo $page['page_id']; ?>">Edit</a> |
-                            <a href="delete_page.php?id=<?php echo $page['page_id']; ?>" onclick="return confirm('Are you sure you want to delete this page?');">Delete</a>
-                        </td>
+                        <?php if ($_SESSION['role'] === 'admin'): ?>
+                            <td>
+                                <a href="edit_pages.php?page_id=<?php echo $page['page_id']; ?>">Edit</a> |
+                                <a href="delete.php?page_id=<?php echo $page['page_id']; ?>" onclick="return confirm('Are you sure?');">Delete</a>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="4">No pages found.</td>
+                    <td colspan="5">No pages found.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
     </table>
+
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a href="create.php">Create New Page</a>
+    <?php endif; ?>
+    
+    <br>
+    <a href="index.php">Back to Home</a>
 </body>
 </html>

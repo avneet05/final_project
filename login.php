@@ -1,3 +1,6 @@
+
+
+
 <?php
 session_start();
 include 'db.php'; // Include the database connection file
@@ -24,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
 
+                
+
                 // Redirect to dashboard or homepage
                 header("Location: index.php");
                 exit();
@@ -45,10 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Optional CSS file -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="login-container">
+    <div class="container">
         <h2>Login</h2>
         <?php if (!empty($error)) : ?>
             <div class="error">
@@ -68,3 +73,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </body>
 </html>
+
+
+<?php
+$plain_password = 'admin';
+$hashed_password = '$2y$10$hFDPg3eXvi1gdlhrdeW5/OkKozrwWuOaHbqeGr6QZY/'; // Your stored hash
+
+if (password_verify($plain_password, $hashed_password)) {
+    echo "Password matches.";
+} else {
+    echo "Password does not match.";
+}
+?>
