@@ -1,36 +1,34 @@
-
-
 <?php
 session_start();
 require 'db.php';
 
-// Check if the user is logged in and is an admin
+// Ensure the user is logged in and is an admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     echo "Access Denied: Only admins can edit pages.";
     exit();
 }
 
-// Fetch the page ID from the URL
-if (!isset($_GET['page_id'])) {
-    header("Location: view_pages.php");
+// Check if a page ID is provided
+if (!isset($_GET['page_id']) || empty($_GET['page_id'])) {
+    echo "Error: Page ID is missing.";
     exit();
 }
 
-$page_id = $_GET['page_id'];
+$page_id = intval($_GET['page_id']);
 
-// Fetch page details from the database
-$query = "SELECT * FROM pages WHERE page_id = :page_id";
+// Fetch the page details to pre-fill the form
+$query = "SELECT * FROM pages WHERE page_id = :page_id LIMIT 1";
 $stmt = $pdo->prepare($query);
 $stmt->bindParam(':page_id', $page_id, PDO::PARAM_INT);
 $stmt->execute();
 $page = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$page) {
-    echo "Page not found.";
+    echo "Error: Page not found.";
     exit();
 }
 
-// Handle form submission
+// Handle form submission to update the page
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'] ?? '';
@@ -44,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_stmt->bindParam(':page_id', $page_id, PDO::PARAM_INT);
 
         if ($update_stmt->execute()) {
-            // Redirect to the home page after updating
+            // Redirect to home page after editing
             header("Location: index.php");
             exit();
         } else {
@@ -63,51 +61,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Page</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        textarea {
-            height: 200px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .message {
-            margin-bottom: 20px;
-            color: red;
-            font-weight: bold;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form { max-width: 600px; margin: 0 auto; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 4px; }
+        textarea { height: 200px; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .message { margin-bottom: 20px; color: red; font-weight: bold; }
     </style>
 </head>
 <body>
     <h1>Edit Page</h1>
 
     <?php if ($message): ?>
-        <div class="message"><?php echo htmlspecialchars($message); ?></div>
+        <p class="message"><?php echo htmlspecialchars($message); ?></p>
     <?php endif; ?>
 
     <form method="post">
@@ -120,6 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Update Page</button>
     </form>
     <br>
-    <a href="view_pages.php">Back to View Pages</a>
+    <a href="index.php">Back to Home</a>
 </body>
 </html>
