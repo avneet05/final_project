@@ -5,7 +5,12 @@
 session_start();
 include 'db.php'; // Database connection
 
-
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to login page if not logged in
+    header("Location: login.php");
+    exit();
+}
 
 // Fetch some data to display on the homepage if needed
 $query = "SELECT title, created_at FROM pages ORDER BY created_at DESC LIMIT 5";
