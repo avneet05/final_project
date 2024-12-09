@@ -1,6 +1,3 @@
-
-
-
 <?php
 session_start();
 include 'db.php'; // Include the database connection file
@@ -27,8 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
 
-                
-
                 // Redirect to dashboard or homepage
                 header("Location: index.php");
                 exit();
@@ -50,7 +45,117 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* General Reset */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9; /* Light gray background */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container for the login form */
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Headings */
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        /* Error Message */
+        .error {
+            margin-bottom: 20px;
+            color: #e74c3c;
+            background-color: #fdecea;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Form Styling */
+        form {
+            margin: 0 auto;
+            width: 100%;
+            text-align: left;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        form input[type="text"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        form input[type="text"]:focus,
+        form input[type="password"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* Button Styling */
+        form button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Link Styling */
+        form a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: block;
+            margin-top: 10px;
+        }
+
+        form a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer for extra information */
+        .container p {
+            font-size: 0.9rem;
+            margin-top: 15px;
+            color: #7f8c8d;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -73,15 +178,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </body>
 </html>
-
-
-<?php
-$plain_password = 'admin';
-$hashed_password = '$2y$10$hFDPg3eXvi1gdlhrdeW5/OkKozrwWuOaHbqeGr6QZY/'; // Your stored hash
-
-if (password_verify($plain_password, $hashed_password)) {
-    echo "Password matches.";
-} else {
-    echo "Password does not match.";
-}
-?>
