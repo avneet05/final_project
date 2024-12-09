@@ -54,14 +54,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #f4f4f9; /* Light gray background */
             color: #333;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* Container for the login form */
-        .container {
+        /* Heading at the top */
+        h1 {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Main layout container */
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
             width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Side images */
+        .side-image {
+            flex: 1;
+            background: url('workout.jpg') no-repeat left center;
+            max-width: 600px;
+            height: 200px;
+        }
+
+        /* Login container */
+        .container {
+            flex: 2;
             max-width: 400px;
             padding: 20px;
             background-color: #ffffff;
@@ -70,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-align: center;
         }
 
-        /* Headings */
+        /* Headings inside the form */
         h2 {
             color: #2c3e50;
             margin-bottom: 20px;
@@ -158,23 +184,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Login</h2>
-        <?php if (!empty($error)) : ?>
-            <div class="error">
-                <p><?php echo $error; ?></p>
-            </div>
-        <?php endif; ?>
-        <form action="login.php" method="POST">
-            <label for="username">Username:</label>
-            <input type="text" name="username" id="username" required>
+    <h1>Welcome to FitLife Hub</h1> <!-- Heading at the top -->
+    <div class="main-container">
+        <div class="side-image"></div> <!-- Left workout image -->
+        <div class="container">
+            <h2>Login</h2>
+            <?php if (!empty($error)) : ?>
+                <div class="error">
+                    <p><?php echo $error; ?></p>
+                </div>
+            <?php endif; ?>
+            <form action="login.php" method="POST">
+                <label for="username">Username:</label>
+                <input type="text" name="username" id="username" required>
 
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required>
 
-            <button type="submit">Login</button>
-        </form>
-        <p>Don't have an account? <a href="register.php">Register here</a>.</p>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="register.php">Register here</a>.</p>
+        </div>
+        <div class="side-image"></div> <!-- Right workout image -->
     </div>
 </body>
 </html>
