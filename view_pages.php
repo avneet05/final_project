@@ -13,7 +13,7 @@ $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $userId = $_SESSION['user_id']; // Get the logged-in user ID
 $username = $_SESSION['username']; // Get the logged-in user's name
 
-// CAPTCHA generation
+// CAPTCHA generation (if not already generated)
 if (!isset($_SESSION['captcha'])) {
     $_SESSION['captcha'] = rand(1000, 9999); // Generate a 4-digit random CAPTCHA
 }
@@ -163,20 +163,53 @@ foreach ($pages as $page) {
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
-        .captcha-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
         .comment-right {
             float: right;
             width: 40%;
             padding: 20px;
             border-left: 2px solid #ddd;
         }
+        .captcha-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
         .captcha-image {
             display: inline-block;
             margin-top: 10px;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            overflow: auto;
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -258,14 +291,11 @@ foreach ($pages as $page) {
                                 <?php if (!$isAdmin): ?>
                                     <!-- Comment Submission Form for Users -->
                                     <div class="comment-form">
-                                        <form method="POST" onsubmit="return validateCaptcha()">
+                                        <form id="commentForm" method="POST">
                                             <input type="hidden" name="page_id" value="<?php echo $page['page_id']; ?>">
                                             <textarea name="comment" placeholder="Write your comment..." required></textarea><br>
-                                            <div class="captcha-container">
-                                                <input type="text" name="captcha" placeholder="Enter CAPTCHA" required>
-                                                <img src="view_pages.php?captcha=true" alt="CAPTCHA" class="captcha-image">
-                                            </div>
-                                            <button type="submit">Submit Comment</button>
+                                            
+                                            <button type="button" onclick="showCaptchaModal()">Submit Comment</button>
                                         </form>
                                         <?php if (!empty($captchaError)): ?>
                                             <p style="color: red;"><?php echo $captchaError; ?></p>
@@ -287,15 +317,38 @@ foreach ($pages as $page) {
         </tbody>
     </table>
 
+    <!-- CAPTCHA Modal -->
+    <div id="captchaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Please enter the CAPTCHA to verify you're a human:</h3>
+            <img src="view_pages.php?captcha=true" alt="CAPTCHA" class="captcha-image"><br>
+            <input type="text" id="captchaInput" placeholder="Enter CAPTCHA" required>
+            <button onclick="submitComment()">Submit Comment</button>
+        </div>
+    </div>
+
     <script>
-        function validateCaptcha() {
-            var captchaInput = document.querySelector('input[name="captcha"]').value;
-            var captchaImage = document.querySelector('img').alt;
-            if (captchaInput !== captchaImage) {
-                alert('Captcha is incorrect!');
-                return false;
+        function showCaptchaModal() {
+            // Show the CAPTCHA modal when the user clicks the submit button
+            document.getElementById('captchaModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            // Close the CAPTCHA modal
+            document.getElementById('captchaModal').style.display = 'none';
+        }
+
+        function submitComment() {
+            const captchaInput = document.getElementById('captchaInput').value;
+            const correctCaptcha = "<?php echo $_SESSION['captcha']; ?>";
+            
+            // Check if CAPTCHA is correct
+            if (captchaInput === correctCaptcha) {
+                document.getElementById('commentForm').submit();
+            } else {
+                alert("Incorrect CAPTCHA. Please try again.");
             }
-            return true;
         }
     </script>
 </body>
