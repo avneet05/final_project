@@ -1,5 +1,3 @@
-
-
 <?php
 // Start session and include necessary files
 session_start();
@@ -131,7 +129,7 @@ $result = $pdo->query($query);
             <ul>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
                     <li><a href="create.php">Create New Page</a></li>
-                    
+                    <li><a href="user_logins.php">User Logins</a></li>
                 <?php endif; ?>
                 <li><a href="view_pages.php">View All Pages</a></li>
                 <li><a href="logout.php">Logout</a></li>

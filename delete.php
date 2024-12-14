@@ -1,23 +1,24 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    echo "Access Denied: Only admins can delete pages.";
+require 'db.php';
+
+// Ensure user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
     exit();
 }
 
-require 'db.php';
+// Check if page ID is provided
+if (isset($_GET['id'])) {
+    $pageId = $_GET['id'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['page_id'])) {
-    $page_id = $_GET['page_id'];
-
-    $stmt = $pdo->prepare("DELETE FROM pages WHERE page_id = :page_id");
-    $stmt->bindParam(':page_id', $page_id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        header("Location: view_pages.php");
-        exit();
-    } else {
-        echo "Error: Could not delete the page.";
-    }
+    // Prepare the delete query
+    $query = "DELETE FROM pages WHERE page_id = :page_id";
+    $stmt = $pdo->prepare($query);
+    $stmt->bindParam(':page_id', $pageId, PDO::PARAM_INT);
+    $stmt->execute();
 }
-?>
+
+// Redirect to view pages after deletion
+header('Location: view_pages.php');
+exit();

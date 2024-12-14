@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
 
-                // Redirect to dashboard or homepage
+                // Redirect all users to index.php
                 header("Location: index.php");
                 exit();
             } else {
@@ -51,7 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9; /* Light gray background */
+            background: url('photo.jpg') no-repeat center center fixed;
+            background-size: cover;
             color: #333;
             display: flex;
             flex-direction: column;
@@ -59,15 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             min-height: 100vh;
         }
 
-        /* Heading at the top */
         h1 {
             font-size: 2.5rem;
-            color: #3498db;
+            color: black;
             margin-top: 20px;
             text-align: center;
         }
 
-        /* Main layout container */
         .main-container {
             display: flex;
             align-items: center;
@@ -77,33 +76,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             max-width: 1200px;
         }
 
-        /* Side images */
-        .side-image {
-            flex: 1;
-            background: url('workout.jpg') no-repeat left center;
-            max-width: 600px;
-            height: 200px;
-        }
-
-        /* Login container */
         .container {
             flex: 2;
             max-width: 400px;
             padding: 20px;
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
-        /* Headings inside the form */
         h2 {
             color: #2c3e50;
             margin-bottom: 20px;
             font-size: 1.8rem;
         }
 
-        /* Error Message */
         .error {
             margin-bottom: 20px;
             color: #e74c3c;
@@ -113,7 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-size: 0.9rem;
         }
 
-        /* Form Styling */
         form {
             margin: 0 auto;
             width: 100%;
@@ -145,7 +132,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             outline: none;
         }
 
-        /* Button Styling */
         form button {
             width: 100%;
             padding: 12px;
@@ -162,7 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #2980b9;
         }
 
-        /* Link Styling */
         form a {
             color: #3498db;
             text-decoration: none;
@@ -175,7 +160,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             text-decoration: underline;
         }
 
-        /* Footer for extra information */
         .container p {
             font-size: 0.9rem;
             margin-top: 15px;
@@ -184,9 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-    <h1>Welcome to FitLife Hub</h1> <!-- Heading at the top -->
+    <h1>Welcome to FitLife Hub</h1>
     <div class="main-container">
-        <div class="side-image"></div> <!-- Left workout image -->
         <div class="container">
             <h2>Login</h2>
             <?php if (!empty($error)) : ?>
@@ -205,7 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
             <p>Don't have an account? <a href="register.php">Register here</a>.</p>
         </div>
-        <div class="side-image"></div> <!-- Right workout image -->
     </div>
 </body>
 </html>
